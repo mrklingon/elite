@@ -49,6 +49,7 @@ function plotPane2 (xl: number, yl: number) {
             }
         }
     }
+    plotPane(xl, yl)
 }
 input.onButtonPressed(Button.AB, function () {
     plotPane2(X, Y)
