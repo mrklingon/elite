@@ -38,11 +38,21 @@ function plotPane2 (xl: number, yl: number) {
                 led.plotBrightness(Index2, index, Universe[getIndex(xl + Index2, index + yl)] * 20)
                 basic.pause(500)
                 basic.showString(sys[getIndex(xl + Index2, index + yl)])
-                basic.pause(100)
+                basic.pause(500)
+                basic.showLeds(`
+                    . . . . .
+                    . . . . .
+                    . . . . .
+                    . . . . .
+                    . . . . .
+                    `)
             }
         }
     }
 }
+input.onButtonPressed(Button.AB, function () {
+    plotPane2(X, Y)
+})
 input.onButtonPressed(Button.B, function () {
     Y += 1
     if (Y > 24) {
@@ -67,7 +77,7 @@ function initUniverse () {
 function plotPane (xl: number, yl: number) {
     for (let index = 0; index <= 4; index++) {
         for (let Index2 = 0; Index2 <= 4; Index2++) {
-        	
+            led.plotBrightness(Index2, index, Universe[getIndex(xl + Index2, index + yl)] * 20)
         }
     }
 }
