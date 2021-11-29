@@ -45,6 +45,11 @@ function plotPane2 (xl: number, yl: number) {
                 led.plotBrightness(Index2, index, Universe[getIndex(xl + Index2, index + yl)] * 20)
                 basic.pause(500)
                 basic.showString(sys[getIndex(xl + Index2, index + yl)])
+                if (Type[getIndex(xl + Index2, index + yl)] == 1) {
+                    basic.showString("T")
+                } else {
+                    basic.showString("A")
+                }
                 basic.pause(500)
                 basic.showLeds(`
                     . . . . .
@@ -81,17 +86,27 @@ input.onButtonPressed(Button.B, function () {
     }
     basic.pause(100)
 })
+input.onGesture(Gesture.Shake, function () {
+    XV = 0
+    YV = 0
+    Pause = 1
+    plotPane2(1, 1)
+    Pause = 0
+})
 function initUniverse () {
     Diam = 30
     Universe = []
     sys = []
+    Type = []
     for (let index = 0; index < Diam * Diam; index++) {
         if (800 < randint(0, 1000)) {
             Universe.push(randint(3, 7))
             sys.push(mkName())
+            Type.push(randint(1, 2))
         } else {
             Universe.push(0)
             sys.push("")
+            Type.push(0)
         }
     }
 }
@@ -102,14 +117,24 @@ function plotPane (xl: number, yl: number) {
         }
     }
 }
+let Type: number[] = []
 let sys: string[] = []
 let Universe: number[] = []
 let syls: string[] = []
 let name = ""
 let Diam = 0
+let Pause = 0
 let YV = 0
 let XV = 0
 let Direction2 = 0
+basic.showString("Elite")
+images.createBigImage(`
+    . . . # . . . . . .
+    . . # # # # . . # .
+    . # . # . . . # . .
+    . . # # # # . . . .
+    . . . # . . . . . #
+    `).scrollImage(1, 200)
 initUniverse()
 for (let Index3 = 0; Index3 <= 24; Index3++) {
     plotPane(Index3, 0)
@@ -122,7 +147,7 @@ let Y = 0
 Direction2 = 0
 XV = 0
 YV = 0
-let Pause = 0
+Pause = 0
 basic.forever(function () {
     if (Pause == 0) {
         X = X + XV
