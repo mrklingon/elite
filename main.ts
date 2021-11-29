@@ -2,11 +2,18 @@ function getIndex (xq: number, yq: number) {
     return xq + yq * Diam
 }
 input.onButtonPressed(Button.A, function () {
-    X += 1
-    if (X > 24) {
-        X = 0
+    if (Direction2 == 0) {
+        YV += -1
     }
-    plotPane(X, Y)
+    if (Direction2 == 1) {
+        XV += 1
+    }
+    if (Direction2 == 2) {
+        YV += 1
+    }
+    if (Direction2 == 3) {
+        XV += -1
+    }
 })
 function mkName () {
     name = ""
@@ -52,14 +59,27 @@ function plotPane2 (xl: number, yl: number) {
     plotPane(xl, yl)
 }
 input.onButtonPressed(Button.AB, function () {
-    plotPane2(X, Y)
+    XV = 0
+    YV = 0
 })
 input.onButtonPressed(Button.B, function () {
-    Y += 1
-    if (Y > 24) {
-        Y = 0
+    Direction2 += 1
+    if (Direction2 > 3) {
+        Direction2 = 0
     }
-    plotPane(X, Y)
+    if (Direction2 == 0) {
+        led.plot(2, 3)
+    }
+    if (Direction2 == 1) {
+        led.plot(1, 2)
+    }
+    if (Direction2 == 2) {
+        led.plot(2, 1)
+    }
+    if (Direction2 == 3) {
+        led.plot(3, 2)
+    }
+    basic.pause(100)
 })
 function initUniverse () {
     Diam = 30
@@ -87,8 +107,9 @@ let Universe: number[] = []
 let syls: string[] = []
 let name = ""
 let Diam = 0
-let Y = 0
-let X = 0
+let YV = 0
+let XV = 0
+let Direction2 = 0
 initUniverse()
 for (let Index3 = 0; Index3 <= 24; Index3++) {
     plotPane(Index3, 0)
@@ -96,5 +117,30 @@ for (let Index3 = 0; Index3 <= 24; Index3++) {
 }
 basic.pause(500)
 plotPane(0, 0)
-X = 0
-Y = 0
+let X = 0
+let Y = 0
+Direction2 = 0
+XV = 0
+YV = 0
+let Pause = 0
+basic.forever(function () {
+    if (Pause == 0) {
+        X = X + XV
+        Y = Y + YV
+        if (X > Diam) {
+            X = X - Diam
+        }
+        if (Y > Diam) {
+            Y = Y - Diam
+        }
+        if (X < 0) {
+            X = X + Diam
+        }
+        if (Y < 0) {
+            Y = Y + Diam
+        }
+        plotPane(X, Y)
+        led.plot(2, 2)
+        basic.pause(500)
+    }
+})
