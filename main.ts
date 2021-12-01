@@ -264,6 +264,7 @@ let Tech = 0
 let Battle = 0
 let ey = 0
 let sx = 0
+game.setLife(5)
 let Agro = 0
 sx = 2
 ey = 0
@@ -344,7 +345,10 @@ basic.forever(function () {
         clrEnemy(4, ey)
         ey += 1
         for (let index = 0; index <= 2; index++) {
-            if (ey == 5) {
+            if (ey == 4) {
+                if (4 == sx || (2 == sx || 0 == sx)) {
+                    game.removeLife(1)
+                }
                 MODE = Travel
                 Pause = 0
             } else {
