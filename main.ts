@@ -1,11 +1,17 @@
-input.onPinPressed(TouchPin.P0, function () {
-    doBattle()
-})
 function shoShip (num: number) {
     led.plot(num, 4)
 }
 function clrShip (num: number) {
     led.unplot(num, 4)
+}
+function shoStats () {
+    basic.showString("C")
+    basic.showNumber(Credits)
+    basic.showString("A")
+    basic.showNumber(ACargo)
+    basic.showString("T")
+    basic.showNumber(TCargo)
+    Pause = 0
 }
 function getIndex (xq: number, yq: number) {
     return xq + yq * Diam
@@ -32,6 +38,9 @@ input.onButtonPressed(Button.A, function () {
         }
         shoShip(sx)
     }
+    if (MODE == Docked) {
+        doLaunch()
+    }
 })
 function stationStop () {
     LOC = getIndex(2 + X, 2 + Y)
@@ -52,6 +61,8 @@ function stationStop () {
     }
     Credits += -20
     game.setScore(Credits)
+    shoStats()
+    station[2].showImage(0)
     if (Credits <= 0) {
         game.gameOver()
     }
@@ -126,16 +137,6 @@ function plotPane2 (xl: number, yl: number) {
     }
     plotPane(xl, yl)
 }
-input.onPinPressed(TouchPin.P2, function () {
-    Pause = 1
-    basic.showString("C")
-    basic.showNumber(Credits)
-    basic.showString("A")
-    basic.showNumber(ACargo)
-    basic.showString("T")
-    basic.showNumber(TCargo)
-    Pause = 0
-})
 function clrEnemy (num: number, num2: number) {
     led.unplot(num, num2)
 }
@@ -171,16 +172,12 @@ input.onButtonPressed(Button.B, function () {
         shoShip(sx)
     }
 })
-input.onPinPressed(TouchPin.P1, function () {
-    doLaunch()
-})
 input.onGesture(Gesture.Shake, function () {
     if (MODE == Travel) {
         XV = 0
         YV = 0
         Pause = 1
-        plotPane2(X, Y)
-        Pause = 0
+        shoStats()
     }
 })
 function chkLOC () {
@@ -216,8 +213,8 @@ function doLaunch () {
         station[2 - index4].showImage(0)
         basic.pause(200)
     }
-    MODE = Travel
-    Pause = 0
+    MODE = Battle
+    Pause = 1
     doBattle()
 }
 function doBattle () {
