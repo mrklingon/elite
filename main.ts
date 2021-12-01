@@ -1,21 +1,36 @@
 input.onPinPressed(TouchPin.P0, function () {
-    doDock()
+    doBattle()
 })
+function shoShip (num: number) {
+    led.plot(num, 4)
+}
+function clrShip (num: number) {
+    led.unplot(num, 4)
+}
 function getIndex (xq: number, yq: number) {
     return xq + yq * Diam
 }
 input.onButtonPressed(Button.A, function () {
-    if (Direction2 == 0) {
-        YV += -1
-    }
-    if (Direction2 == 1) {
-        XV += 1
-    }
-    if (Direction2 == 2) {
-        YV += 1
-    }
-    if (Direction2 == 3) {
-        XV += -1
+    if (MODE != Battle) {
+        if (Direction2 == 0) {
+            YV += -1
+        }
+        if (Direction2 == 1) {
+            XV += 1
+        }
+        if (Direction2 == 2) {
+            YV += 1
+        }
+        if (Direction2 == 3) {
+            XV += -1
+        }
+    } else {
+        clrShip(sx)
+        sx += -1
+        if (sx < 0) {
+            sx = 0
+        }
+        shoShip(sx)
     }
 })
 function stationStop () {
@@ -87,13 +102,13 @@ function plotPane2 (xl: number, yl: number) {
         . . . . .
         . . . . .
         `)
-    for (let index = 0; index <= 4; index++) {
-        for (let Index2 = 0; Index2 <= 4; Index2++) {
-            if (0 < Universe[getIndex(xl + Index2, index + yl)]) {
-                led.plotBrightness(Index2, index, Universe[getIndex(xl + Index2, index + yl)] * 20)
+    for (let index2 = 0; index2 <= 4; index2++) {
+        for (let index2 = 0; index2 <= 4; index2++) {
+            if (0 < Universe[getIndex(xl + index2, index2 + yl)]) {
+                led.plotBrightness(index2, index2, Universe[getIndex(xl + index2, index2 + yl)] * 20)
                 basic.pause(500)
-                basic.showString(sys[getIndex(xl + Index2, index + yl)])
-                if (Type[getIndex(xl + Index2, index + yl)] == Tech) {
+                basic.showString(sys[getIndex(xl + index2, index2 + yl)])
+                if (Type[getIndex(xl + index2, index2 + yl)] == Tech) {
                     basic.showString("T")
                 } else {
                     basic.showString("A")
@@ -121,28 +136,40 @@ input.onPinPressed(TouchPin.P2, function () {
     basic.showNumber(TCargo)
     Pause = 0
 })
+function clrEnemy (num: number, num2: number) {
+    led.unplot(num, num2)
+}
 input.onButtonPressed(Button.AB, function () {
     XV = 0
     YV = 0
 })
 input.onButtonPressed(Button.B, function () {
-    Direction2 += 1
-    if (Direction2 > 3) {
-        Direction2 = 0
+    if (MODE != Battle) {
+        Direction2 += 1
+        if (Direction2 > 3) {
+            Direction2 = 0
+        }
+        if (Direction2 == 0) {
+            led.plot(2, 3)
+        }
+        if (Direction2 == 1) {
+            led.plot(1, 2)
+        }
+        if (Direction2 == 2) {
+            led.plot(2, 1)
+        }
+        if (Direction2 == 3) {
+            led.plot(3, 2)
+        }
+        basic.pause(100)
+    } else {
+        clrShip(sx)
+        sx += 1
+        if (sx > 4) {
+            sx = 4
+        }
+        shoShip(sx)
     }
-    if (Direction2 == 0) {
-        led.plot(2, 3)
-    }
-    if (Direction2 == 1) {
-        led.plot(1, 2)
-    }
-    if (Direction2 == 2) {
-        led.plot(2, 1)
-    }
-    if (Direction2 == 3) {
-        led.plot(3, 2)
-    }
-    basic.pause(100)
 })
 input.onPinPressed(TouchPin.P1, function () {
     doLaunch()
@@ -179,21 +206,40 @@ function initUniverse () {
         }
     }
 }
+function shoEnemy (num: number, num2: number) {
+    led.plotBrightness(num, num2, 177)
+}
 function doLaunch () {
     X = randint(0, 29)
     Y = randint(0, 29)
-    for (let index = 0; index <= 2; index++) {
-        station[2 - index].showImage(0)
+    for (let index4 = 0; index4 <= 2; index4++) {
+        station[2 - index4].showImage(0)
         basic.pause(200)
     }
     MODE = Travel
     Pause = 0
-    plotPane(X, Y)
+    doBattle()
+}
+function doBattle () {
+    MODE = Battle
+    ey = 0
+    sx = 2
+    basic.showLeds(`
+        . . . . .
+        . . . . .
+        . . . . .
+        . . . . .
+        . . . . .
+        `)
+    for (let index = 0; index <= 2; index++) {
+        shoEnemy(2 * index, ey)
+    }
+    shoShip(sx)
 }
 function plotPane (xl: number, yl: number) {
-    for (let index = 0; index <= 4; index++) {
-        for (let Index2 = 0; Index2 <= 4; Index2++) {
-            led.plotBrightness(Index2, index, Universe[getIndex(xl + Index2, index + yl)] * 20)
+    for (let index5 = 0; index5 <= 4; index5++) {
+        for (let Index22 = 0; Index22 <= 4; Index22++) {
+            led.plotBrightness(Index22, index5, Universe[getIndex(xl + Index22, index5 + yl)] * 20)
         }
     }
 }
@@ -218,8 +264,14 @@ let TCargo = 0
 let ACargo = 0
 let Credits = 0
 let Tech = 0
-Tech = 1
+let Battle = 0
+let ey = 0
+let sx = 0
 let Agro = 0
+sx = 2
+ey = 0
+Battle = 2
+Tech = 1
 Credits = 100
 ACargo = 50
 TCargo = 50
@@ -288,5 +340,20 @@ basic.forever(function () {
         if (XV == 0 && YV == 0) {
             chkLOC()
         }
+    }
+    if (MODE == Battle) {
+        clrEnemy(0, ey)
+        clrEnemy(2, ey)
+        clrEnemy(4, ey)
+        ey += 1
+        for (let index = 0; index <= 2; index++) {
+            if (ey == 5) {
+                MODE = Travel
+                Pause = 0
+            } else {
+                shoEnemy(index * 2, ey)
+            }
+        }
+        basic.pause(500)
     }
 })
